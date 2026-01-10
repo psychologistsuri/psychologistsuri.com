@@ -8,15 +8,25 @@
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Markdown renderer (marked) -->
+    <!-- Markdown renderer -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- Code highlighting (optional, nice for posts) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
+    <!-- Code highlighting (optional) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
 
+    <script>
+      // Tailwind config (optional niceties)
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+
     <style>
-      /* Nice readable "article" typography without extra libs */
+      /* Simple “prose” styling that respects dark mode */
       .proseish h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; margin: 1.5rem 0 1rem; }
       .proseish h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
       .proseish h3 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
@@ -24,78 +34,104 @@
       .proseish ul { list-style: disc; padding-left: 1.25rem; margin: 0.75rem 0; }
       .proseish ol { list-style: decimal; padding-left: 1.25rem; margin: 0.75rem 0; }
       .proseish blockquote { border-left: 3px solid #e5e7eb; padding-left: 1rem; color: #374151; margin: 1rem 0; }
+      .dark .proseish blockquote { border-left-color: #334155; color: #cbd5e1; }
       .proseish a { color: #2563eb; text-decoration: underline; }
+      .dark .proseish a { color: #93c5fd; }
       .proseish code { background: #f3f4f6; padding: 0.15rem 0.35rem; border-radius: 0.375rem; }
+      .dark .proseish code { background: #0f172a; }
       .proseish pre { background: #0b1220; color: #e5e7eb; padding: 1rem; border-radius: 0.75rem; overflow: auto; margin: 1rem 0; }
       .proseish pre code { background: transparent; padding: 0; }
     </style>
   </head>
 
-  <body class="bg-white text-zinc-900">
-    <!-- Top bar -->
-    <header class="border-b border-zinc-200">
+  <body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <header class="border-b border-zinc-200 dark:border-zinc-800">
       <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
         <a href="/" class="font-semibold tracking-tight text-lg">psychologistsuri</a>
-        <nav class="text-sm text-zinc-600 flex items-center gap-4">
-          <a class="hover:text-zinc-900" href="/">Articles</a>
-          <a class="hover:text-zinc-900" href="#" id="aboutLink">About</a>
-        </nav>
+
+        <div class="flex items-center gap-3">
+          <nav class="text-sm text-zinc-600 dark:text-zinc-300 flex items-center gap-4">
+            <a class="hover:text-zinc-900 dark:hover:text-white" href="/">Articles</a>
+            <a class="hover:text-zinc-900 dark:hover:text-white" href="#" id="aboutLink">About</a>
+          </nav>
+
+          <button
+            id="themeToggle"
+            class="ml-1 inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            type="button"
+            aria-label="Toggle dark mode"
+            title="Toggle theme"
+          >
+            <span id="themeIcon" aria-hidden="true">🌙</span>
+            <span id="themeLabel">Dark</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- Main -->
     <main class="max-w-5xl mx-auto px-4 py-10">
-      <div id="status" class="hidden mb-6 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700"></div>
+      <div
+        id="status"
+        class="hidden mb-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-700 dark:text-zinc-200"
+      ></div>
 
       <!-- List view -->
       <section id="listView" class="hidden">
         <div class="flex items-start justify-between gap-6">
           <div>
             <h1 class="text-3xl font-bold tracking-tight">Articles</h1>
-            <p class="mt-2 text-zinc-600">Notes, essays, and research-friendly writing.</p>
+            <p class="mt-2 text-zinc-600 dark:text-zinc-300">Notes, essays, and research-friendly writing.</p>
           </div>
 
           <div class="w-full max-w-xs">
-            <label class="text-xs font-medium text-zinc-600">Search</label>
-            <input id="search" type="text" placeholder="Type to filter..."
-              class="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900/10"/>
+            <label class="text-xs font-medium text-zinc-600 dark:text-zinc-300">Search</label>
+            <input
+              id="search"
+              type="text"
+              placeholder="Type to filter..."
+              class="mt-1 w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10"
+            />
           </div>
         </div>
 
         <div class="mt-8 grid gap-4" id="articleList"></div>
 
-        <footer class="mt-10 text-xs text-zinc-500">
-          Tip: Add new posts by dropping files into <code>/articles</code> and updating <code>/articles/index.json</code>.
+        <footer class="mt-10 text-xs text-zinc-500 dark:text-zinc-400">
+          Add new posts by placing files in <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">/articles</code>
+          and updating <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">/articles/index.json</code>.
         </footer>
       </section>
 
       <!-- Article view -->
       <section id="articleView" class="hidden">
         <div class="flex items-center justify-between gap-4">
-          <a href="/" class="text-sm text-zinc-600 hover:text-zinc-900">← Back to Articles</a>
-          <button id="copyLinkBtn"
-            class="text-sm rounded-xl border border-zinc-300 px-3 py-1.5 hover:bg-zinc-50">
+          <a href="/" class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">← Back to Articles</a>
+          <button
+            id="copyLinkBtn"
+            class="text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            type="button"
+          >
             Copy link
           </button>
         </div>
 
         <article class="mt-6">
           <h1 id="articleTitle" class="text-3xl font-bold tracking-tight"></h1>
-          <p id="articleMeta" class="mt-2 text-sm text-zinc-500"></p>
+          <p id="articleMeta" class="mt-2 text-sm text-zinc-500 dark:text-zinc-400"></p>
           <div id="articleBody" class="mt-8 proseish"></div>
         </article>
       </section>
 
-      <!-- About (simple modal-ish panel) -->
+      <!-- About view -->
       <section id="aboutView" class="hidden">
-        <a href="/" class="text-sm text-zinc-600 hover:text-zinc-900">← Back</a>
-        <div class="mt-6 rounded-2xl border border-zinc-200 p-6">
+        <a href="/" class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">← Back</a>
+        <div class="mt-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
           <h1 class="text-2xl font-bold tracking-tight">About</h1>
-          <p class="mt-2 text-zinc-600">
+          <p class="mt-2 text-zinc-600 dark:text-zinc-300">
             A personal publishing space for psychology, education, and applied practice writing.
           </p>
-          <p class="mt-4 text-sm text-zinc-600">
-            You can customize this section later. For now it’s a clean placeholder.
+          <p class="mt-4 text-sm text-zinc-600 dark:text-zinc-300">
+            Customize this later.
           </p>
         </div>
       </section>
@@ -103,8 +139,8 @@
 
     <script>
       // ---------- Config ----------
-      const INDEX_URL = "/articles/index.json";  // manifest listing files
-      const ARTICLES_BASE = "/articles/";        // folder containing .txt files
+      const INDEX_URL = "/articles/index.json";
+      const ARTICLES_BASE = "/articles/";
 
       // ---------- Helpers ----------
       const qs = (s) => document.querySelector(s);
@@ -123,45 +159,73 @@
         return url.searchParams.get(name);
       }
 
-      function safeTextTitle(firstLine) {
-        // Accept "# Title" or "Title"
-        const t = (firstLine || "").trim();
-        return t.replace(/^#+\s*/, "").trim();
+      function escapeHtml(str) {
+        return (str ?? "").replace(/[&<>"']/g, (m) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[m]));
       }
 
-      function splitTitleAndBody(text) {
-        const lines = (text || "").replace(/\r\n/g, "\n").split("\n");
-        const firstNonEmptyIndex = lines.findIndex(l => l.trim().length > 0);
-        if (firstNonEmptyIndex === -1) return { title: "Untitled", body: "" };
+      // ---------- Theme ----------
+      const THEME_KEY = "ps_theme";
 
-        const titleLine = lines[firstNonEmptyIndex];
-        const title = safeTextTitle(titleLine) || "Untitled";
+      function applyTheme(theme) {
+        const root = document.documentElement;
+        const isDark = theme === "dark";
+        root.classList.toggle("dark", isDark);
 
-        // Body is everything after the title line
-        const body = lines.slice(firstNonEmptyIndex + 1).join("\n").trimStart();
-        return { title, body };
+        qs("#themeIcon").textContent = isDark ? "☀️" : "🌙";
+        qs("#themeLabel").textContent = isDark ? "Light" : "Dark";
       }
 
-      function formatDateFromFilename(filename) {
-        // Optional: if you name files like 2026-01-10-example.txt it will show the date
-        const m = filename.match(/^(\d{4}-\d{2}-\d{2})[-_]/);
-        return m ? m[1] : "";
+      function initTheme() {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === "dark" || saved === "light") {
+          applyTheme(saved);
+          return;
+        }
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        applyTheme(prefersDark ? "dark" : "light");
       }
 
-      // ---------- Rendering ----------
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.contains("dark");
+        const next = isDark ? "light" : "dark";
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+      }
+
+      // ---------- Data loading ----------
       async function loadIndex() {
         const res = await fetch(INDEX_URL, { cache: "no-store" });
         if (!res.ok) throw new Error("Could not load /articles/index.json");
         const data = await res.json();
-        if (!data || !Array.isArray(data.files)) throw new Error("index.json must contain { files: [...] }");
-        return data.files;
+
+        // Expect: { articles: [ { "file": "anything.txt", "title": "Nice Title", "date": "2026-01-10" }, ... ] }
+        if (!data || !Array.isArray(data.articles)) {
+          throw new Error('index.json must contain { "articles": [ { "file": "...", "title": "..." } ] }');
+        }
+        return data.articles;
       }
 
-      async function loadArticle(filename) {
+      async function loadArticleFile(filename) {
         const url = ARTICLES_BASE + encodeURIComponent(filename);
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`Could not load article: ${filename}`);
         return await res.text();
+      }
+
+      function ensureH1Title(markdownText, titleFromIndex) {
+        // File name doesn't matter. We enforce the title using index.json.
+        // If the markdown already begins with an H1, we keep it.
+        const txt = (markdownText || "").replace(/\r\n/g, "\n");
+        const trimmed = txt.trimStart();
+
+        if (/^#\s+\S+/m.test(trimmed.split("\n")[0] || "")) {
+          return txt; // already has H1
+        }
+
+        // Prepend the H1 from index.json
+        return `# ${titleFromIndex}\n\n${txt}`;
       }
 
       function renderList(items) {
@@ -170,7 +234,7 @@
 
         if (!items.length) {
           list.innerHTML = `
-            <div class="rounded-2xl border border-zinc-200 p-6 text-sm text-zinc-600">
+            <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 text-sm text-zinc-600 dark:text-zinc-300">
               No articles found.
             </div>
           `;
@@ -178,81 +242,49 @@
         }
 
         for (const item of items) {
-          const { filename, title, date } = item;
+          const filename = item.file;
+          const title = item.title || filename;
+          const date = item.date || "";
+
           const card = document.createElement("a");
           card.href = `/?a=${encodeURIComponent(filename)}`;
           card.className =
-            "group block rounded-2xl border border-zinc-200 p-5 hover:bg-zinc-50 transition";
+            "group block rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition";
 
           card.innerHTML = `
             <div class="flex items-start justify-between gap-4">
               <div>
                 <div class="text-lg font-semibold tracking-tight group-hover:underline">${escapeHtml(title)}</div>
-                <div class="mt-1 text-xs text-zinc-500">${date ? escapeHtml(date) : ""}</div>
+                <div class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">${date ? escapeHtml(date) : ""}</div>
               </div>
-              <div class="text-zinc-400 group-hover:text-zinc-600">→</div>
+              <div class="text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300">→</div>
             </div>
           `;
           list.appendChild(card);
         }
       }
 
-      function escapeHtml(str) {
-        return (str ?? "").replace(/[&<>"']/g, (m) => ({
-          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-        }[m]));
-      }
-
-      function renderArticle({ filename, title, body }) {
+      function renderArticle({ title, filename, date, markdown }) {
         qs("#articleTitle").textContent = title;
-
-        const date = formatDateFromFilename(filename);
         qs("#articleMeta").textContent = [
           date ? `Date: ${date}` : "",
-          `File: ${filename}`
+          filename ? `File: ${filename}` : ""
         ].filter(Boolean).join(" • ");
 
-        // Configure marked + highlight
-        marked.setOptions({
-          gfm: true,
-          breaks: false
-        });
+        marked.setOptions({ gfm: true, breaks: false });
 
-        const html = marked.parse(body || "");
+        const html = marked.parse(markdown || "");
         qs("#articleBody").innerHTML = html;
 
-        // Highlight code blocks (optional)
         document.querySelectorAll("pre code").forEach((el) => hljs.highlightElement(el));
       }
 
-      // ---------- App ----------
-      async function boot() {
-        const aboutLink = qs("#aboutLink");
-        aboutLink.addEventListener("click", (e) => {
-          e.preventDefault();
-          history.pushState({}, "", "/?about=1");
-          route();
-        });
-
-        qs("#copyLinkBtn").addEventListener("click", async () => {
-          try {
-            await navigator.clipboard.writeText(window.location.href);
-            setStatus("Link copied.");
-            setTimeout(() => setStatus(""), 1200);
-          } catch {
-            setStatus("Could not copy. You can copy the URL from the address bar.");
-          }
-        });
-
-        window.addEventListener("popstate", route);
-        await route();
-      }
-
+      // ---------- Routing ----------
       async function route() {
         setStatus("");
 
-        const a = getParam("a");
         const about = getParam("about");
+        const a = getParam("a");
 
         hide(qs("#listView"));
         hide(qs("#articleView"));
@@ -266,13 +298,20 @@
         if (a) {
           show(qs("#articleView"));
           try {
-            const text = await loadArticle(a);
-            const { title, body } = splitTitleAndBody(text);
-            renderArticle({ filename: a, title, body });
+            const index = await loadIndex();
+            const entry = index.find(x => x.file === a);
+
+            const title = entry?.title || a;
+            const date = entry?.date || "";
+
+            const raw = await loadArticleFile(a);
+            const md = ensureH1Title(raw, title);
+
+            renderArticle({ title, filename: a, date, markdown: md });
           } catch (err) {
             qs("#articleTitle").textContent = "Not found";
             qs("#articleMeta").textContent = "";
-            qs("#articleBody").innerHTML = `<p class="text-zinc-600">Could not load this article.</p>`;
+            qs("#articleBody").innerHTML = `<p class="text-zinc-600 dark:text-zinc-300">Could not load this article.</p>`;
             setStatus(String(err.message || err));
           }
           return;
@@ -280,48 +319,59 @@
 
         // List view
         show(qs("#listView"));
-
         try {
-          const files = await loadIndex();
+          const items = await loadIndex();
 
-          // Pre-read titles for list (lightweight: fetch each file once)
-          // If you have MANY files, we can optimize later by storing titles in index.json.
-          const items = [];
-          for (const filename of files) {
-            try {
-              const txt = await loadArticle(filename);
-              const { title } = splitTitleAndBody(txt);
-              items.push({ filename, title, date: formatDateFromFilename(filename) });
-            } catch {
-              items.push({ filename, title: filename, date: formatDateFromFilename(filename) });
-            }
-          }
-
-          // Sort newest first if filenames start with date; otherwise keep order from index.json
-          items.sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+          // Sort newest first if dates exist; otherwise keep order
+          const sorted = [...items].sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+          renderList(sorted);
 
           const search = qs("#search");
           const applyFilter = () => {
             const q = (search.value || "").toLowerCase().trim();
-            const filtered = !q ? items : items.filter(it =>
-              it.title.toLowerCase().includes(q) || it.filename.toLowerCase().includes(q)
+            const filtered = !q ? sorted : sorted.filter(it =>
+              (it.title || "").toLowerCase().includes(q) ||
+              (it.file || "").toLowerCase().includes(q)
             );
             renderList(filtered);
           };
-
           search.oninput = applyFilter;
           applyFilter();
         } catch (err) {
           setStatus(String(err.message || err));
           qs("#articleList").innerHTML = `
-            <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
-              Could not load <code>/articles/index.json</code>. See instructions below.
-              <div class="mt-3 text-red-700/90">
-                Create <code>/articles/index.json</code> with a list of files.
+            <div class="rounded-2xl border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-6 text-sm text-red-700 dark:text-red-200">
+              Could not load <code>/articles/index.json</code>.
+              <div class="mt-3 opacity-90">
+                Create it with: <code>{ "articles": [ { "file": "x.txt", "title": "My Title" } ] }</code>
               </div>
             </div>
           `;
         }
+      }
+
+      async function boot() {
+        initTheme();
+        qs("#themeToggle").addEventListener("click", toggleTheme);
+
+        qs("#aboutLink").addEventListener("click", (e) => {
+          e.preventDefault();
+          history.pushState({}, "", "/?about=1");
+          route();
+        });
+
+        qs("#copyLinkBtn").addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            setStatus("Link copied.");
+            setTimeout(() => setStatus(""), 1200);
+          } catch {
+            setStatus("Could not copy. Copy the URL from the address bar.");
+          }
+        });
+
+        window.addEventListener("popstate", route);
+        await route();
       }
 
       boot();

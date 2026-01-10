@@ -1,6 +1,6 @@
 {
-  "files": [
-    "Example Title.txt",
-    "2026-01-10-first-post.txt"
+  "articles": [
+    { "file": "anything-can-be-named.txt", "title": "Example Title", "date": "2026-01-10" },
+    { "file": "randomfile123.txt", "title": "Second Article Title" }
   ]
 }

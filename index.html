@@ -95,6 +95,21 @@
   </head>
 
   <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 theme-fade">
+    <div
+      id="loader"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div class="flex flex-col items-center gap-4 px-6 text-center">
+        <div class="text-3xl">⏳</div>
+        <div class="text-lg font-semibold">Website loading...</div>
+        <div class="text-sm text-zinc-600 dark:text-zinc-300">
+          Preparing articles and layout. Please wait.
+        </div>
+      </div>
+    </div>
+
     <header
       class="border-b border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-950/80 backdrop-blur"
     >
@@ -121,7 +136,7 @@
             aria-label="Toggle theme"
             type="button"
           >
-            🌗
+            ☀️
           </button>
         </div>
       </div>
@@ -212,11 +227,16 @@
         localStorage.setItem("ps_theme", theme);
       }
 
+      function syncThemeIcon() {
+        const btn = qs("#themeToggle");
+        const isDark = document.documentElement.classList.contains("dark");
+        btn.textContent = isDark ? "☀️" : "🌙";
+      }
+
       qs("#themeToggle").addEventListener("click", () => {
-        document.body.classList.add("is-switching");
         const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
         setTheme(next);
-        window.setTimeout(() => document.body.classList.remove("is-switching"), 150);
+        location.reload();
       });
 
       async function loadIndex() {
@@ -359,7 +379,7 @@
 
           show("#listView");
           renderList(items);
-        } catch (err) {
+        } catch {
           show("#listView");
           const list = qs("#articleList");
           list.innerHTML =
@@ -367,7 +387,17 @@
         }
       }
 
+      function startLoader() {
+        const loader = qs("#loader");
+        syncThemeIcon();
+        window.setTimeout(() => {
+          loader.classList.add("hidden");
+          loader.setAttribute("aria-busy", "false");
+        }, 5000);
+      }
+
       window.addEventListener("hashchange", route);
+      startLoader();
       route();
     </script>
   </body>

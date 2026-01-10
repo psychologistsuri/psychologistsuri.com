@@ -13,6 +13,7 @@
           window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
         const theme = saved === "dark" || saved === "light" ? saved : prefersDark ? "dark" : "light";
         if (theme === "dark") document.documentElement.classList.add("dark");
+        document.documentElement.style.colorScheme = theme;
       })();
     </script>
 
@@ -27,6 +28,17 @@
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
 
     <style>
+      html { color-scheme: light; }
+      html.dark { color-scheme: dark; }
+
+      body.theme-fade {
+        transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+      }
+      body.theme-fade * {
+        transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, fill 160ms ease, stroke 160ms ease;
+      }
+      body.is-switching { opacity: 0.94; }
+
       .proseish h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; margin: 1.5rem 0 1rem; }
       .proseish h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
       .proseish h3 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
@@ -59,7 +71,6 @@
             >Articles</a>
             <a
               href="#/about"
-              id="aboutLink"
               class="px-3 py-2 rounded-full text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/70 dark:hover:bg-zinc-900/60"
             >About</a>
           </nav>
@@ -188,19 +199,35 @@
       function setTheme(theme) {
         const isDark = theme === "dark";
         document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.style.colorScheme = isDark ? "dark" : "light";
         localStorage.setItem(THEME_KEY, theme);
+      }
+
+      function setThemeSmooth(theme) {
+        const isDark = theme === "dark";
+        document.body.classList.add("theme-fade", "is-switching");
+        requestAnimationFrame(() => {
+          document.documentElement.classList.toggle("dark", isDark);
+          document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+          localStorage.setItem(THEME_KEY, theme);
+          requestAnimationFrame(() => {
+            window.setTimeout(() => document.body.classList.remove("is-switching"), 140);
+          });
+        });
       }
 
       function toggleTheme() {
         const isDark = document.documentElement.classList.contains("dark");
-        setTheme(isDark ? "light" : "dark");
+        const next = isDark ? "light" : "dark";
+        setThemeSmooth(next);
       }
 
       function initThemeStorage() {
         const saved = localStorage.getItem(THEME_KEY);
         const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
         const theme = saved === "dark" || saved === "light" ? saved : prefersDark ? "dark" : "light";
-        setTheme(theme);
+        localStorage.setItem(THEME_KEY, theme);
+        document.documentElement.style.colorScheme = theme;
       }
 
       function parseTitleFromMarkdown(text) {
@@ -363,6 +390,8 @@
 
       async function boot() {
         initThemeStorage();
+        document.body.classList.add("theme-fade");
+
         qs("#themeToggle").addEventListener("click", toggleTheme);
 
         qs("#copyLinkBtn").addEventListener("click", async () => {

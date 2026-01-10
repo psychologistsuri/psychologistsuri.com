@@ -9,7 +9,8 @@
       (function () {
         const THEME_KEY = "ps_theme";
         const saved = localStorage.getItem(THEME_KEY);
-        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const prefersDark =
+          window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
         const theme = saved === "dark" || saved === "light" ? saved : prefersDark ? "dark" : "light";
         if (theme === "dark") document.documentElement.classList.add("dark");
       })();
@@ -43,32 +44,42 @@
     </style>
   </head>
 
-  <body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-    <header class="border-b border-zinc-200 dark:border-zinc-800">
-      <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        <a href="/" class="font-semibold tracking-tight text-base leading-none">Surendra Bisht</a>
+  <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
+    <header class="sticky top-0 z-40 border-b border-zinc-200/70 dark:border-zinc-800/70 bg-white/80 dark:bg-zinc-950/75 backdrop-blur">
+      <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="#/" class="font-semibold tracking-tight text-[15px] text-zinc-950 dark:text-zinc-50">
+          Surendra Bisht
+        </a>
 
-        <div class="flex items-center gap-4">
-          <nav class="text-sm text-zinc-600 dark:text-zinc-300 flex items-center gap-4">
-            <a class="hover:text-zinc-900 dark:hover:text-white" href="/">Articles</a>
-            <a class="hover:text-zinc-900 dark:hover:text-white" href="#" id="aboutLink">About</a>
+        <div class="flex items-center gap-2">
+          <nav class="hidden sm:flex items-center gap-1 text-sm">
+            <a
+              href="#/"
+              class="px-3 py-2 rounded-full text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/70 dark:hover:bg-zinc-900/60"
+            >Articles</a>
+            <a
+              href="#/about"
+              id="aboutLink"
+              class="px-3 py-2 rounded-full text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/70 dark:hover:bg-zinc-900/60"
+            >About</a>
           </nav>
 
           <button
             id="themeToggle"
-            class="inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 px-2 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-900"
             type="button"
-            role="switch"
-            aria-checked="false"
             aria-label="Toggle theme"
+            class="inline-flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 h-10 w-10 hover:bg-zinc-100/70 dark:hover:bg-zinc-900/60 transition"
           >
-            <span class="relative inline-flex h-6 w-11 items-center rounded-full bg-zinc-200 dark:bg-zinc-800 transition-colors">
-              <span
-                id="themeKnob"
-                class="inline-block h-5 w-5 transform rounded-full bg-white dark:bg-zinc-100 transition-transform translate-x-1"
-              ></span>
-            </span>
-            <span id="themeLabel" class="ml-2 text-sm text-zinc-700 dark:text-zinc-200">Light</span>
+            <svg class="h-5 w-5 text-zinc-700 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>
+              <path d="M12 2v2"></path><path d="M12 20v2"></path>
+              <path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path>
+              <path d="M2 12h2"></path><path d="M20 12h2"></path>
+              <path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path>
+            </svg>
+            <svg class="h-5 w-5 text-zinc-200 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"></path>
+            </svg>
           </button>
         </div>
       </div>
@@ -77,27 +88,35 @@
     <main class="max-w-5xl mx-auto px-4 py-10">
       <div
         id="status"
-        class="hidden mb-6 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-700 dark:text-zinc-200"
+        class="hidden mb-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 px-4 py-3 text-sm text-zinc-700 dark:text-zinc-200"
         role="status"
       ></div>
 
       <section id="listView" class="hidden">
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div class="min-w-0">
             <h1 class="text-3xl font-bold tracking-tight">Articles</h1>
-            <p class="mt-2 text-zinc-600 dark:text-zinc-300">
+            <p class="mt-2 max-w-2xl text-zinc-600 dark:text-zinc-300">
               Applied psychology, special education, inclusive practice, and school counseling.
             </p>
           </div>
 
           <div class="w-full sm:w-80">
-            <input
-              id="search"
-              type="text"
-              placeholder="Search titles"
-              class="w-full rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10"
-              autocomplete="off"
-            />
+            <div class="relative">
+              <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-zinc-400">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="M20 20l-3.5-3.5"></path>
+                </svg>
+              </span>
+              <input
+                id="search"
+                type="text"
+                placeholder="Search articles"
+                class="w-full rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 pl-9 pr-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10"
+                autocomplete="off"
+              />
+            </div>
           </div>
         </div>
 
@@ -107,13 +126,13 @@
       <section id="articleView" class="hidden">
         <div class="flex items-center justify-between gap-4">
           <a
-            href="/"
-            class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+            href="#/"
+            class="text-sm px-3 py-2 rounded-full text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/70 dark:hover:bg-zinc-900/60"
           >Back</a>
 
           <button
             id="copyLinkBtn"
-            class="text-sm rounded-full border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            class="text-sm px-3 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100/70 dark:hover:bg-zinc-900/60"
             type="button"
           >
             Copy link
@@ -128,8 +147,8 @@
 
       <section id="aboutView" class="hidden">
         <a
-          href="/"
-          class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+          href="#/"
+          class="text-sm inline-flex px-3 py-2 rounded-full text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/70 dark:hover:bg-zinc-900/60"
         >Back</a>
 
         <div class="mt-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6">
@@ -166,25 +185,10 @@
         show(box);
       }
 
-      function getParam(name) {
-        const url = new URL(window.location.href);
-        return url.searchParams.get(name);
-      }
-
-      function syncThemeUI() {
-        const isDark = document.documentElement.classList.contains("dark");
-        qs("#themeToggle").setAttribute("aria-checked", String(isDark));
-        qs("#themeLabel").textContent = isDark ? "Dark" : "Light";
-        const knob = qs("#themeKnob");
-        knob.classList.toggle("translate-x-1", !isDark);
-        knob.classList.toggle("translate-x-5", isDark);
-      }
-
       function setTheme(theme) {
         const isDark = theme === "dark";
         document.documentElement.classList.toggle("dark", isDark);
         localStorage.setItem(THEME_KEY, theme);
-        syncThemeUI();
       }
 
       function toggleTheme() {
@@ -192,7 +196,7 @@
         setTheme(isDark ? "light" : "dark");
       }
 
-      function initThemeUI() {
+      function initThemeStorage() {
         const saved = localStorage.getItem(THEME_KEY);
         const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
         const theme = saved === "dark" || saved === "light" ? saved : prefersDark ? "dark" : "light";
@@ -204,6 +208,35 @@
         const firstNonEmpty = lines.find((l) => l.trim().length > 0) || "";
         const match = firstNonEmpty.match(/^#\s+(.+)\s*$/);
         return match ? match[1].trim() : "";
+      }
+
+      function stripLeadingH1(markdown) {
+        const normalized = (markdown || "").replace(/\r\n/g, "\n");
+        const lines = normalized.split("\n");
+        let i = 0;
+        while (i < lines.length && lines[i].trim() === "") i++;
+        if (i < lines.length && /^#\s+.+/.test(lines[i].trim())) {
+          lines.splice(i, 1);
+          if (i < lines.length && lines[i].trim() === "") lines.splice(i, 1);
+        }
+        return lines.join("\n");
+      }
+
+      function slugify(s) {
+        return (s || "")
+          .toLowerCase()
+          .trim()
+          .replace(/['"]/g, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+
+      function getRoute() {
+        const h = (location.hash || "#/").slice(1);
+        if (!h || h === "/") return { view: "list" };
+        if (h === "/about") return { view: "about" };
+        if (h.startsWith("/article/")) return { view: "article", slug: decodeURIComponent(h.slice("/article/".length)) };
+        return { view: "list" };
       }
 
       async function loadIndex() {
@@ -236,9 +269,9 @@
 
         for (const it of items) {
           const card = document.createElement("a");
-          card.href = "/?a=" + encodeURIComponent(it.file);
+          card.href = "#/article/" + encodeURIComponent(it.slug);
           card.className =
-            "block rounded-3xl border border-zinc-200 dark:border-zinc-800 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition";
+            "block rounded-3xl border border-zinc-200 dark:border-zinc-800 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition";
 
           const titleEl = document.createElement("div");
           titleEl.className = "text-lg font-semibold tracking-tight";
@@ -258,25 +291,57 @@
       async function route() {
         setStatus("");
 
-        const about = getParam("about");
-        const a = getParam("a");
-
         hide(qs("#listView"));
         hide(qs("#articleView"));
         hide(qs("#aboutView"));
 
-        if (about) {
+        const r = getRoute();
+
+        if (r.view === "about") {
           show(qs("#aboutView"));
           return;
         }
 
-        if (a) {
-          show(qs("#articleView"));
+        const files = await loadIndex().catch(() => null);
+
+        if (!files) {
+          show(qs("#listView"));
+          setStatus("Articles are not available yet.");
+          renderList([]);
+          return;
+        }
+
+        const items = [];
+
+        for (const file of files) {
           try {
-            const md = await fetchText(a);
+            const md = await fetchText(file);
+            const title = parseTitleFromMarkdown(md) || "Untitled";
+            const slug = slugify(title) || slugify(file) || file;
+            items.push({ file, title, slug });
+          } catch {
+            const fallbackSlug = slugify(file) || file;
+            items.push({ file, title: "Untitled", slug: fallbackSlug });
+          }
+        }
+
+        if (r.view === "article") {
+          show(qs("#articleView"));
+          const match = items.find((x) => x.slug === r.slug);
+          if (!match) {
+            qs("#articleTitle").textContent = "Article not available";
+            qs("#articleBody").textContent = "";
+            setStatus("This page could not be loaded.");
+            return;
+          }
+
+          try {
+            const md = await fetchText(match.file);
             const title = parseTitleFromMarkdown(md) || "Untitled";
             qs("#articleTitle").textContent = title;
-            renderArticle(md);
+
+            const bodyMd = stripLeadingH1(md);
+            renderArticle(bodyMd);
           } catch {
             qs("#articleTitle").textContent = "Article not available";
             qs("#articleBody").textContent = "";
@@ -286,52 +351,19 @@
         }
 
         show(qs("#listView"));
-
-        try {
-          const files = await loadIndex();
-          const items = [];
-
-          for (const file of files) {
-            try {
-              const md = await fetchText(file);
-              const title = parseTitleFromMarkdown(md) || "Untitled";
-              items.push({ file, title });
-            } catch {
-              items.push({ file, title: "Untitled" });
-            }
-          }
-
-          const search = qs("#search");
-          const applyFilter = () => {
-            const q = (search.value || "").toLowerCase().trim();
-            const filtered = !q ? items : items.filter((it) => it.title.toLowerCase().includes(q));
-            renderList(filtered);
-          };
-
-          search.oninput = applyFilter;
-          applyFilter();
-        } catch {
-          setStatus("Articles are not available yet.");
-          renderList([]);
-        }
+        const search = qs("#search");
+        const applyFilter = () => {
+          const q = (search.value || "").toLowerCase().trim();
+          const filtered = !q ? items : items.filter((it) => (it.title || "").toLowerCase().includes(q));
+          renderList(filtered);
+        };
+        search.oninput = applyFilter;
+        applyFilter();
       }
 
       async function boot() {
-        initThemeUI();
-
+        initThemeStorage();
         qs("#themeToggle").addEventListener("click", toggleTheme);
-        qs("#themeToggle").addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            toggleTheme();
-          }
-        });
-
-        qs("#aboutLink").addEventListener("click", (e) => {
-          e.preventDefault();
-          history.pushState({}, "", "/?about=1");
-          route();
-        });
 
         qs("#copyLinkBtn").addEventListener("click", async () => {
           try {
@@ -343,7 +375,7 @@
           }
         });
 
-        window.addEventListener("popstate", route);
+        window.addEventListener("hashchange", route);
         await route();
       }
 

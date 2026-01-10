@@ -135,9 +135,7 @@
             class="h-10 w-10 rounded-full border-2 border-zinc-300 dark:border-zinc-700 flex items-center justify-center"
             aria-label="Toggle theme"
             type="button"
-          >
-            ☀️
-          </button>
+          ></button>
         </div>
       </div>
     </header>
@@ -233,9 +231,11 @@
         btn.textContent = isDark ? "☀️" : "🌙";
       }
 
+      syncThemeIcon();
+
       qs("#themeToggle").addEventListener("click", () => {
         const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
-        setTheme(next);
+        localStorage.setItem("ps_theme", next);
         location.reload();
       });
 
@@ -389,7 +389,6 @@
 
       function startLoader() {
         const loader = qs("#loader");
-        syncThemeIcon();
         window.setTimeout(() => {
           loader.classList.add("hidden");
           loader.setAttribute("aria-busy", "false");

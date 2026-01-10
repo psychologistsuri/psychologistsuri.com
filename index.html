@@ -4,8 +4,327 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>psychologistsuri</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Markdown renderer (marked) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Code highlighting (optional, nice for posts) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+
+    <style>
+      /* Nice readable "article" typography without extra libs */
+      .proseish h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; margin: 1.5rem 0 1rem; }
+      .proseish h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
+      .proseish h3 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
+      .proseish p { margin: 0.75rem 0; }
+      .proseish ul { list-style: disc; padding-left: 1.25rem; margin: 0.75rem 0; }
+      .proseish ol { list-style: decimal; padding-left: 1.25rem; margin: 0.75rem 0; }
+      .proseish blockquote { border-left: 3px solid #e5e7eb; padding-left: 1rem; color: #374151; margin: 1rem 0; }
+      .proseish a { color: #2563eb; text-decoration: underline; }
+      .proseish code { background: #f3f4f6; padding: 0.15rem 0.35rem; border-radius: 0.375rem; }
+      .proseish pre { background: #0b1220; color: #e5e7eb; padding: 1rem; border-radius: 0.75rem; overflow: auto; margin: 1rem 0; }
+      .proseish pre code { background: transparent; padding: 0; }
+    </style>
   </head>
-  <body>
-    <h1>Hello world</h1>
+
+  <body class="bg-white text-zinc-900">
+    <!-- Top bar -->
+    <header class="border-b border-zinc-200">
+      <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+        <a href="/" class="font-semibold tracking-tight text-lg">psychologistsuri</a>
+        <nav class="text-sm text-zinc-600 flex items-center gap-4">
+          <a class="hover:text-zinc-900" href="/">Articles</a>
+          <a class="hover:text-zinc-900" href="#" id="aboutLink">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="max-w-5xl mx-auto px-4 py-10">
+      <div id="status" class="hidden mb-6 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700"></div>
+
+      <!-- List view -->
+      <section id="listView" class="hidden">
+        <div class="flex items-start justify-between gap-6">
+          <div>
+            <h1 class="text-3xl font-bold tracking-tight">Articles</h1>
+            <p class="mt-2 text-zinc-600">Notes, essays, and research-friendly writing.</p>
+          </div>
+
+          <div class="w-full max-w-xs">
+            <label class="text-xs font-medium text-zinc-600">Search</label>
+            <input id="search" type="text" placeholder="Type to filter..."
+              class="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900/10"/>
+          </div>
+        </div>
+
+        <div class="mt-8 grid gap-4" id="articleList"></div>
+
+        <footer class="mt-10 text-xs text-zinc-500">
+          Tip: Add new posts by dropping files into <code>/articles</code> and updating <code>/articles/index.json</code>.
+        </footer>
+      </section>
+
+      <!-- Article view -->
+      <section id="articleView" class="hidden">
+        <div class="flex items-center justify-between gap-4">
+          <a href="/" class="text-sm text-zinc-600 hover:text-zinc-900">← Back to Articles</a>
+          <button id="copyLinkBtn"
+            class="text-sm rounded-xl border border-zinc-300 px-3 py-1.5 hover:bg-zinc-50">
+            Copy link
+          </button>
+        </div>
+
+        <article class="mt-6">
+          <h1 id="articleTitle" class="text-3xl font-bold tracking-tight"></h1>
+          <p id="articleMeta" class="mt-2 text-sm text-zinc-500"></p>
+          <div id="articleBody" class="mt-8 proseish"></div>
+        </article>
+      </section>
+
+      <!-- About (simple modal-ish panel) -->
+      <section id="aboutView" class="hidden">
+        <a href="/" class="text-sm text-zinc-600 hover:text-zinc-900">← Back</a>
+        <div class="mt-6 rounded-2xl border border-zinc-200 p-6">
+          <h1 class="text-2xl font-bold tracking-tight">About</h1>
+          <p class="mt-2 text-zinc-600">
+            A personal publishing space for psychology, education, and applied practice writing.
+          </p>
+          <p class="mt-4 text-sm text-zinc-600">
+            You can customize this section later. For now it’s a clean placeholder.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // ---------- Config ----------
+      const INDEX_URL = "/articles/index.json";  // manifest listing files
+      const ARTICLES_BASE = "/articles/";        // folder containing .txt files
+
+      // ---------- Helpers ----------
+      const qs = (s) => document.querySelector(s);
+      const show = (el) => el.classList.remove("hidden");
+      const hide = (el) => el.classList.add("hidden");
+
+      function setStatus(msg) {
+        const box = qs("#status");
+        if (!msg) { hide(box); box.textContent = ""; return; }
+        box.textContent = msg;
+        show(box);
+      }
+
+      function getParam(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+      }
+
+      function safeTextTitle(firstLine) {
+        // Accept "# Title" or "Title"
+        const t = (firstLine || "").trim();
+        return t.replace(/^#+\s*/, "").trim();
+      }
+
+      function splitTitleAndBody(text) {
+        const lines = (text || "").replace(/\r\n/g, "\n").split("\n");
+        const firstNonEmptyIndex = lines.findIndex(l => l.trim().length > 0);
+        if (firstNonEmptyIndex === -1) return { title: "Untitled", body: "" };
+
+        const titleLine = lines[firstNonEmptyIndex];
+        const title = safeTextTitle(titleLine) || "Untitled";
+
+        // Body is everything after the title line
+        const body = lines.slice(firstNonEmptyIndex + 1).join("\n").trimStart();
+        return { title, body };
+      }
+
+      function formatDateFromFilename(filename) {
+        // Optional: if you name files like 2026-01-10-example.txt it will show the date
+        const m = filename.match(/^(\d{4}-\d{2}-\d{2})[-_]/);
+        return m ? m[1] : "";
+      }
+
+      // ---------- Rendering ----------
+      async function loadIndex() {
+        const res = await fetch(INDEX_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("Could not load /articles/index.json");
+        const data = await res.json();
+        if (!data || !Array.isArray(data.files)) throw new Error("index.json must contain { files: [...] }");
+        return data.files;
+      }
+
+      async function loadArticle(filename) {
+        const url = ARTICLES_BASE + encodeURIComponent(filename);
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Could not load article: ${filename}`);
+        return await res.text();
+      }
+
+      function renderList(items) {
+        const list = qs("#articleList");
+        list.innerHTML = "";
+
+        if (!items.length) {
+          list.innerHTML = `
+            <div class="rounded-2xl border border-zinc-200 p-6 text-sm text-zinc-600">
+              No articles found.
+            </div>
+          `;
+          return;
+        }
+
+        for (const item of items) {
+          const { filename, title, date } = item;
+          const card = document.createElement("a");
+          card.href = `/?a=${encodeURIComponent(filename)}`;
+          card.className =
+            "group block rounded-2xl border border-zinc-200 p-5 hover:bg-zinc-50 transition";
+
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <div class="text-lg font-semibold tracking-tight group-hover:underline">${escapeHtml(title)}</div>
+                <div class="mt-1 text-xs text-zinc-500">${date ? escapeHtml(date) : ""}</div>
+              </div>
+              <div class="text-zinc-400 group-hover:text-zinc-600">→</div>
+            </div>
+          `;
+          list.appendChild(card);
+        }
+      }
+
+      function escapeHtml(str) {
+        return (str ?? "").replace(/[&<>"']/g, (m) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[m]));
+      }
+
+      function renderArticle({ filename, title, body }) {
+        qs("#articleTitle").textContent = title;
+
+        const date = formatDateFromFilename(filename);
+        qs("#articleMeta").textContent = [
+          date ? `Date: ${date}` : "",
+          `File: ${filename}`
+        ].filter(Boolean).join(" • ");
+
+        // Configure marked + highlight
+        marked.setOptions({
+          gfm: true,
+          breaks: false
+        });
+
+        const html = marked.parse(body || "");
+        qs("#articleBody").innerHTML = html;
+
+        // Highlight code blocks (optional)
+        document.querySelectorAll("pre code").forEach((el) => hljs.highlightElement(el));
+      }
+
+      // ---------- App ----------
+      async function boot() {
+        const aboutLink = qs("#aboutLink");
+        aboutLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          history.pushState({}, "", "/?about=1");
+          route();
+        });
+
+        qs("#copyLinkBtn").addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            setStatus("Link copied.");
+            setTimeout(() => setStatus(""), 1200);
+          } catch {
+            setStatus("Could not copy. You can copy the URL from the address bar.");
+          }
+        });
+
+        window.addEventListener("popstate", route);
+        await route();
+      }
+
+      async function route() {
+        setStatus("");
+
+        const a = getParam("a");
+        const about = getParam("about");
+
+        hide(qs("#listView"));
+        hide(qs("#articleView"));
+        hide(qs("#aboutView"));
+
+        if (about) {
+          show(qs("#aboutView"));
+          return;
+        }
+
+        if (a) {
+          show(qs("#articleView"));
+          try {
+            const text = await loadArticle(a);
+            const { title, body } = splitTitleAndBody(text);
+            renderArticle({ filename: a, title, body });
+          } catch (err) {
+            qs("#articleTitle").textContent = "Not found";
+            qs("#articleMeta").textContent = "";
+            qs("#articleBody").innerHTML = `<p class="text-zinc-600">Could not load this article.</p>`;
+            setStatus(String(err.message || err));
+          }
+          return;
+        }
+
+        // List view
+        show(qs("#listView"));
+
+        try {
+          const files = await loadIndex();
+
+          // Pre-read titles for list (lightweight: fetch each file once)
+          // If you have MANY files, we can optimize later by storing titles in index.json.
+          const items = [];
+          for (const filename of files) {
+            try {
+              const txt = await loadArticle(filename);
+              const { title } = splitTitleAndBody(txt);
+              items.push({ filename, title, date: formatDateFromFilename(filename) });
+            } catch {
+              items.push({ filename, title: filename, date: formatDateFromFilename(filename) });
+            }
+          }
+
+          // Sort newest first if filenames start with date; otherwise keep order from index.json
+          items.sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+
+          const search = qs("#search");
+          const applyFilter = () => {
+            const q = (search.value || "").toLowerCase().trim();
+            const filtered = !q ? items : items.filter(it =>
+              it.title.toLowerCase().includes(q) || it.filename.toLowerCase().includes(q)
+            );
+            renderList(filtered);
+          };
+
+          search.oninput = applyFilter;
+          applyFilter();
+        } catch (err) {
+          setStatus(String(err.message || err));
+          qs("#articleList").innerHTML = `
+            <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+              Could not load <code>/articles/index.json</code>. See instructions below.
+              <div class="mt-3 text-red-700/90">
+                Create <code>/articles/index.json</code> with a list of files.
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      boot();
+    </script>
   </body>
 </html>

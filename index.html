@@ -3,18 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>psychologistsuri</title>
+    <title>Surendra Singh Bisht</title>
 
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = { darkMode: "class" };
     </script>
 
-    <!-- Markdown renderer -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- Code highlighting (optional) -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css"
@@ -30,7 +27,7 @@
       .proseish ol { list-style: decimal; padding-left: 1.25rem; margin: 0.75rem 0; }
       .proseish blockquote { border-left: 3px solid #e5e7eb; padding-left: 1rem; color: #374151; margin: 1rem 0; }
       .dark .proseish blockquote { border-left-color: #334155; color: #cbd5e1; }
-      .proseish a { color: #2563eb; text-decoration: underline; }
+      .proseish a { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; }
       .dark .proseish a { color: #93c5fd; }
       .proseish code { background: #f3f4f6; padding: 0.15rem 0.35rem; border-radius: 0.375rem; }
       .dark .proseish code { background: #0f172a; }
@@ -42,9 +39,9 @@
   <body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
     <header class="border-b border-zinc-200 dark:border-zinc-800">
       <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        <a href="/" class="font-semibold tracking-tight text-lg">psychologistsuri</a>
+        <a href="/" class="font-semibold tracking-tight text-base">Surendra Singh Bisht</a>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
           <nav class="text-sm text-zinc-600 dark:text-zinc-300 flex items-center gap-4">
             <a class="hover:text-zinc-900 dark:hover:text-white" href="/">Articles</a>
             <a class="hover:text-zinc-900 dark:hover:text-white" href="#" id="aboutLink">About</a>
@@ -52,12 +49,11 @@
 
           <button
             id="themeToggle"
-            class="ml-1 inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            class="inline-flex items-center rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900"
             type="button"
             aria-label="Toggle theme"
           >
-            <span id="themeIcon" aria-hidden="true">🌙</span>
-            <span id="themeLabel">Dark</span>
+            <span id="themeLabel">Dark mode</span>
           </button>
         </div>
       </div>
@@ -66,45 +62,44 @@
     <main class="max-w-5xl mx-auto px-4 py-10">
       <div
         id="status"
-        class="hidden mb-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-700 dark:text-zinc-200"
+        class="hidden mb-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-700 dark:text-zinc-200"
+        role="status"
       ></div>
 
-      <!-- List view -->
       <section id="listView" class="hidden">
         <div class="flex items-start justify-between gap-6">
           <div>
             <h1 class="text-3xl font-bold tracking-tight">Articles</h1>
             <p class="mt-2 text-zinc-600 dark:text-zinc-300">
-              Titles come from each file’s first line: <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900"># Title</code>
+              Applied psychology, special education, inclusive practice, and school counseling.
             </p>
           </div>
 
           <div class="w-full max-w-xs">
-            <label class="text-xs font-medium text-zinc-600 dark:text-zinc-300">Search</label>
+            <label class="text-xs font-medium text-zinc-600 dark:text-zinc-300" for="search">Search</label>
             <input
               id="search"
               type="text"
-              placeholder="Type to filter..."
-              class="mt-1 w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10"
+              placeholder="Search titles"
+              class="mt-1 w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10"
+              autocomplete="off"
             />
           </div>
         </div>
 
-        <div class="mt-8 grid gap-4" id="articleList"></div>
-
-        <footer class="mt-10 text-xs text-zinc-500 dark:text-zinc-400">
-          Add files in <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">/articles</code> and list them in
-          <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">/articles/index.json</code>.
-        </footer>
+        <div class="mt-8 grid gap-3" id="articleList"></div>
       </section>
 
-      <!-- Article view -->
       <section id="articleView" class="hidden">
         <div class="flex items-center justify-between gap-4">
-          <a href="/" class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">← Back</a>
+          <a
+            href="/"
+            class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+          >Back</a>
+
           <button
             id="copyLinkBtn"
-            class="text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            class="text-sm rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-900"
             type="button"
           >
             Copy link
@@ -118,53 +113,42 @@
         </article>
       </section>
 
-      <!-- About view -->
       <section id="aboutView" class="hidden">
-        <a href="/" class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">← Back</a>
+        <a
+          href="/"
+          class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+        >Back</a>
+
         <div class="mt-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
           <h1 class="text-2xl font-bold tracking-tight">About</h1>
-          <p class="mt-2 text-zinc-600 dark:text-zinc-300">A simple publishing space.</p>
+          <p class="mt-2 text-zinc-600 dark:text-zinc-300">
+            Special Educator and School Counselor, Applied Psychology and Special Education.
+          </p>
+          <div class="mt-4 text-sm text-zinc-600 dark:text-zinc-300">
+            <div>Stone Mountain, Georgia, USA</div>
+            <div>Psychologist.suri@gmail.com</div>
+            <div>678-300-7574</div>
+          </div>
         </div>
       </section>
     </main>
 
     <script>
-      // ---------- Config ----------
       const INDEX_URL = "/articles/index.json";
       const ARTICLES_BASE = "/articles/";
-
-      // ---------- Theme ----------
       const THEME_KEY = "ps_theme";
 
-      function applyTheme(theme) {
-        const isDark = theme === "dark";
-        document.documentElement.classList.toggle("dark", isDark);
-        document.querySelector("#themeIcon").textContent = isDark ? "☀️" : "🌙";
-        document.querySelector("#themeLabel").textContent = isDark ? "Light" : "Dark";
-      }
-
-      function initTheme() {
-        const saved = localStorage.getItem(THEME_KEY);
-        if (saved === "dark" || saved === "light") return applyTheme(saved);
-        const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
-        applyTheme(prefersDark ? "dark" : "light");
-      }
-
-      function toggleTheme() {
-        const isDark = document.documentElement.classList.contains("dark");
-        const next = isDark ? "light" : "dark";
-        localStorage.setItem(THEME_KEY, next);
-        applyTheme(next);
-      }
-
-      // ---------- Helpers ----------
       const qs = (s) => document.querySelector(s);
       const show = (el) => el.classList.remove("hidden");
       const hide = (el) => el.classList.add("hidden");
 
       function setStatus(msg) {
         const box = qs("#status");
-        if (!msg) { hide(box); box.textContent = ""; return; }
+        if (!msg) {
+          hide(box);
+          box.textContent = "";
+          return;
+        }
         box.textContent = msg;
         show(box);
       }
@@ -174,35 +158,48 @@
         return url.searchParams.get(name);
       }
 
-      function escapeHtml(str) {
-        return (str ?? "").replace(/[&<>"']/g, (m) => ({
-          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-        }[m]));
+      function setTheme(theme) {
+        const isDark = theme === "dark";
+        document.documentElement.classList.toggle("dark", isDark);
+        qs("#themeLabel").textContent = isDark ? "Light mode" : "Dark mode";
+      }
+
+      function initTheme() {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === "dark" || saved === "light") {
+          setTheme(saved);
+          return;
+        }
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setTheme(prefersDark ? "dark" : "light");
+      }
+
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.contains("dark");
+        const next = isDark ? "light" : "dark";
+        localStorage.setItem(THEME_KEY, next);
+        setTheme(next);
       }
 
       function parseTitleFromMarkdown(text) {
         const lines = (text || "").replace(/\r\n/g, "\n").split("\n");
-        const firstNonEmpty = lines.find(l => l.trim().length > 0) || "";
-        const m = firstNonEmpty.match(/^#\s+(.+)\s*$/);
-        return m ? m[1].trim() : "";
+        const firstNonEmpty = lines.find((l) => l.trim().length > 0) || "";
+        const match = firstNonEmpty.match(/^#\s+(.+)\s*$/);
+        return match ? match[1].trim() : "";
       }
 
       async function loadIndex() {
         const res = await fetch(INDEX_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("Could not load /articles/index.json");
+        if (!res.ok) throw new Error("Unable to load articles index.");
         const data = await res.json();
-
-        // Expect: { "files": ["a.md", "b.txt", ...] }
-        if (!data || !Array.isArray(data.files)) {
-          throw new Error('index.json must be { "files": ["file1.md", "file2.txt"] }');
-        }
+        if (!data || !Array.isArray(data.files)) throw new Error("Invalid articles index format.");
         return data.files;
       }
 
       async function fetchText(filename) {
         const url = ARTICLES_BASE + encodeURIComponent(filename);
         const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) throw new Error(`Could not load article: ${filename}`);
+        if (!res.ok) throw new Error("Unable to load article.");
         return await res.text();
       }
 
@@ -211,29 +208,30 @@
         list.innerHTML = "";
 
         if (!items.length) {
-          list.innerHTML = `
-            <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 text-sm text-zinc-600 dark:text-zinc-300">
-              No articles found.
-            </div>
-          `;
+          const empty = document.createElement("div");
+          empty.className =
+            "rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 text-sm text-zinc-600 dark:text-zinc-300";
+          empty.textContent = "No articles found.";
+          list.appendChild(empty);
           return;
         }
 
         for (const it of items) {
           const card = document.createElement("a");
-          card.href = `/?a=${encodeURIComponent(it.file)}`;
+          card.href = "/?a=" + encodeURIComponent(it.file);
           card.className =
-            "group block rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition";
+            "block rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition";
 
-          card.innerHTML = `
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <div class="text-lg font-semibold tracking-tight group-hover:underline">${escapeHtml(it.title || "Untitled")}</div>
-                <div class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">${escapeHtml(it.file)}</div>
-              </div>
-              <div class="text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300">→</div>
-            </div>
-          `;
+          const titleEl = document.createElement("div");
+          titleEl.className = "text-lg font-semibold tracking-tight";
+          titleEl.textContent = it.title || "Untitled";
+
+          const fileEl = document.createElement("div");
+          fileEl.className = "mt-1 text-xs text-zinc-500 dark:text-zinc-400";
+          fileEl.textContent = it.file;
+
+          card.appendChild(titleEl);
+          card.appendChild(fileEl);
           list.appendChild(card);
         }
       }
@@ -268,13 +266,12 @@
           try {
             const md = await fetchText(a);
             const title = parseTitleFromMarkdown(md);
-            if (!title) setStatus("This article should start with: # Title");
             renderArticle(title, a, md);
-          } catch (err) {
-            qs("#articleTitle").textContent = "Not found";
+          } catch {
+            qs("#articleTitle").textContent = "Article not available";
             qs("#articleMeta").textContent = "";
-            qs("#articleBody").innerHTML = `<p class="text-zinc-600 dark:text-zinc-300">Could not load this article.</p>`;
-            setStatus(String(err.message || err));
+            qs("#articleBody").textContent = "";
+            setStatus("This page could not be loaded.");
           }
           return;
         }
@@ -284,7 +281,6 @@
         try {
           const files = await loadIndex();
 
-          // Load titles for list (this fetches each file once)
           const items = [];
           for (const file of files) {
             try {
@@ -299,23 +295,17 @@
           const search = qs("#search");
           const applyFilter = () => {
             const q = (search.value || "").toLowerCase().trim();
-            const filtered = !q ? items : items.filter(it =>
-              it.title.toLowerCase().includes(q) || it.file.toLowerCase().includes(q)
-            );
+            const filtered = !q
+              ? items
+              : items.filter((it) => it.title.toLowerCase().includes(q));
             renderList(filtered);
           };
+
           search.oninput = applyFilter;
           applyFilter();
-        } catch (err) {
-          setStatus(String(err.message || err));
-          qs("#articleList").innerHTML = `
-            <div class="rounded-2xl border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-6 text-sm text-red-700 dark:text-red-200">
-              Could not load <code>/articles/index.json</code>.
-              <div class="mt-3 opacity-90">
-                It must be: <code>{ "files": ["one.md", "two.txt"] }</code>
-              </div>
-            </div>
-          `;
+        } catch {
+          setStatus("Articles are not available yet.");
+          renderList([]);
         }
       }
 
@@ -335,7 +325,7 @@
             setStatus("Link copied.");
             setTimeout(() => setStatus(""), 1200);
           } catch {
-            setStatus("Could not copy. Copy the URL from the address bar.");
+            setStatus("Copy failed.");
           }
         });
 

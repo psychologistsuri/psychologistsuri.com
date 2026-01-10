@@ -5,28 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>psychologistsuri</title>
 
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
 
-    <!-- Markdown renderer -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- Code highlighting (optional) -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
 
-    <script>
-      // Tailwind config (optional niceties)
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
-
     <style>
-      /* Simple “prose” styling that respects dark mode */
       .proseish h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; margin: 1.5rem 0 1rem; }
       .proseish h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
       .proseish h3 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
@@ -59,8 +51,6 @@
             id="themeToggle"
             class="ml-1 inline-flex items-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900"
             type="button"
-            aria-label="Toggle dark mode"
-            title="Toggle theme"
           >
             <span id="themeIcon" aria-hidden="true">🌙</span>
             <span id="themeLabel">Dark</span>
@@ -75,12 +65,11 @@
         class="hidden mb-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-700 dark:text-zinc-200"
       ></div>
 
-      <!-- List view -->
       <section id="listView" class="hidden">
         <div class="flex items-start justify-between gap-6">
           <div>
             <h1 class="text-3xl font-bold tracking-tight">Articles</h1>
-            <p class="mt-2 text-zinc-600 dark:text-zinc-300">Notes, essays, and research-friendly writing.</p>
+            <p class="mt-2 text-zinc-600 dark:text-zinc-300">Markdown files in <code>/articles</code>.</p>
           </div>
 
           <div class="w-full max-w-xs">
@@ -97,15 +86,16 @@
         <div class="mt-8 grid gap-4" id="articleList"></div>
 
         <footer class="mt-10 text-xs text-zinc-500 dark:text-zinc-400">
-          Add new posts by placing files in <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">/articles</code>
-          and updating <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">/articles/index.json</code>.
+          Add an article: drop a <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">.md</code> or
+          <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">.txt</code> file in <code>/articles</code>,
+          make sure the first line is <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900"># Title</code>,
+          then add the filename to the <code class="px-1 rounded bg-zinc-100 dark:bg-zinc-900">ARTICLES</code> array in this file.
         </footer>
       </section>
 
-      <!-- Article view -->
       <section id="articleView" class="hidden">
         <div class="flex items-center justify-between gap-4">
-          <a href="/" class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">← Back to Articles</a>
+          <a href="/" class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">← Back</a>
           <button
             id="copyLinkBtn"
             class="text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-900"
@@ -122,25 +112,45 @@
         </article>
       </section>
 
-      <!-- About view -->
       <section id="aboutView" class="hidden">
         <a href="/" class="text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">← Back</a>
         <div class="mt-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
           <h1 class="text-2xl font-bold tracking-tight">About</h1>
-          <p class="mt-2 text-zinc-600 dark:text-zinc-300">
-            A personal publishing space for psychology, education, and applied practice writing.
-          </p>
-          <p class="mt-4 text-sm text-zinc-600 dark:text-zinc-300">
-            Customize this later.
-          </p>
+          <p class="mt-2 text-zinc-600 dark:text-zinc-300">A simple article site.</p>
         </div>
       </section>
     </main>
 
     <script>
-      // ---------- Config ----------
-      const INDEX_URL = "/articles/index.json";
+      // ======= EDIT THIS LIST ONLY =======
+      // Put your article files in /articles/
+      // First line must be: # Title
+      const ARTICLES = [
+        "Example Title.txt"
+        // "my-next-article.md",
+      ];
       const ARTICLES_BASE = "/articles/";
+
+      // ---------- Theme ----------
+      const THEME_KEY = "ps_theme";
+      function applyTheme(theme) {
+        const isDark = theme === "dark";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.querySelector("#themeIcon").textContent = isDark ? "☀️" : "🌙";
+        document.querySelector("#themeLabel").textContent = isDark ? "Light" : "Dark";
+      }
+      function initTheme() {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === "dark" || saved === "light") return applyTheme(saved);
+        const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+        applyTheme(prefersDark ? "dark" : "light");
+      }
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.contains("dark");
+        const next = isDark ? "light" : "dark";
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+      }
 
       // ---------- Helpers ----------
       const qs = (s) => document.querySelector(s);
@@ -159,73 +169,18 @@
         return url.searchParams.get(name);
       }
 
-      function escapeHtml(str) {
-        return (str ?? "").replace(/[&<>"']/g, (m) => ({
-          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-        }[m]));
+      function parseTitleFromMarkdown(text) {
+        const lines = (text || "").replace(/\r\n/g, "\n").split("\n");
+        const firstNonEmpty = lines.find(l => l.trim().length > 0) || "";
+        const m = firstNonEmpty.match(/^#\s+(.+)\s*$/);
+        return m ? m[1].trim() : "";
       }
 
-      // ---------- Theme ----------
-      const THEME_KEY = "ps_theme";
-
-      function applyTheme(theme) {
-        const root = document.documentElement;
-        const isDark = theme === "dark";
-        root.classList.toggle("dark", isDark);
-
-        qs("#themeIcon").textContent = isDark ? "☀️" : "🌙";
-        qs("#themeLabel").textContent = isDark ? "Light" : "Dark";
-      }
-
-      function initTheme() {
-        const saved = localStorage.getItem(THEME_KEY);
-        if (saved === "dark" || saved === "light") {
-          applyTheme(saved);
-          return;
-        }
-        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-        applyTheme(prefersDark ? "dark" : "light");
-      }
-
-      function toggleTheme() {
-        const isDark = document.documentElement.classList.contains("dark");
-        const next = isDark ? "light" : "dark";
-        localStorage.setItem(THEME_KEY, next);
-        applyTheme(next);
-      }
-
-      // ---------- Data loading ----------
-      async function loadIndex() {
-        const res = await fetch(INDEX_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("Could not load /articles/index.json");
-        const data = await res.json();
-
-        // Expect: { articles: [ { "file": "anything.txt", "title": "Nice Title", "date": "2026-01-10" }, ... ] }
-        if (!data || !Array.isArray(data.articles)) {
-          throw new Error('index.json must contain { "articles": [ { "file": "...", "title": "..." } ] }');
-        }
-        return data.articles;
-      }
-
-      async function loadArticleFile(filename) {
+      async function fetchText(filename) {
         const url = ARTICLES_BASE + encodeURIComponent(filename);
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`Could not load article: ${filename}`);
         return await res.text();
-      }
-
-      function ensureH1Title(markdownText, titleFromIndex) {
-        // File name doesn't matter. We enforce the title using index.json.
-        // If the markdown already begins with an H1, we keep it.
-        const txt = (markdownText || "").replace(/\r\n/g, "\n");
-        const trimmed = txt.trimStart();
-
-        if (/^#\s+\S+/m.test(trimmed.split("\n")[0] || "")) {
-          return txt; // already has H1
-        }
-
-        // Prepend the H1 from index.json
-        return `# ${titleFromIndex}\n\n${txt}`;
       }
 
       function renderList(items) {
@@ -241,21 +196,17 @@
           return;
         }
 
-        for (const item of items) {
-          const filename = item.file;
-          const title = item.title || filename;
-          const date = item.date || "";
-
+        for (const it of items) {
           const card = document.createElement("a");
-          card.href = `/?a=${encodeURIComponent(filename)}`;
+          card.href = `/?a=${encodeURIComponent(it.file)}`;
           card.className =
             "group block rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition";
 
           card.innerHTML = `
             <div class="flex items-start justify-between gap-4">
               <div>
-                <div class="text-lg font-semibold tracking-tight group-hover:underline">${escapeHtml(title)}</div>
-                <div class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">${date ? escapeHtml(date) : ""}</div>
+                <div class="text-lg font-semibold tracking-tight group-hover:underline">${it.title || it.file}</div>
+                <div class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">${it.file}</div>
               </div>
               <div class="text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300">→</div>
             </div>
@@ -264,22 +215,16 @@
         }
       }
 
-      function renderArticle({ title, filename, date, markdown }) {
-        qs("#articleTitle").textContent = title;
-        qs("#articleMeta").textContent = [
-          date ? `Date: ${date}` : "",
-          filename ? `File: ${filename}` : ""
-        ].filter(Boolean).join(" • ");
+      function renderArticle(title, filename, markdown) {
+        qs("#articleTitle").textContent = title || "Untitled";
+        qs("#articleMeta").textContent = filename || "";
 
         marked.setOptions({ gfm: true, breaks: false });
-
-        const html = marked.parse(markdown || "");
-        qs("#articleBody").innerHTML = html;
+        qs("#articleBody").innerHTML = marked.parse(markdown || "");
 
         document.querySelectorAll("pre code").forEach((el) => hljs.highlightElement(el));
       }
 
-      // ---------- Routing ----------
       async function route() {
         setStatus("");
 
@@ -298,16 +243,12 @@
         if (a) {
           show(qs("#articleView"));
           try {
-            const index = await loadIndex();
-            const entry = index.find(x => x.file === a);
-
-            const title = entry?.title || a;
-            const date = entry?.date || "";
-
-            const raw = await loadArticleFile(a);
-            const md = ensureH1Title(raw, title);
-
-            renderArticle({ title, filename: a, date, markdown: md });
+            const md = await fetchText(a);
+            const title = parseTitleFromMarkdown(md);
+            if (!title) {
+              setStatus("This file needs a first line like: # Title");
+            }
+            renderArticle(title, a, md);
           } catch (err) {
             qs("#articleTitle").textContent = "Not found";
             qs("#articleMeta").textContent = "";
@@ -317,21 +258,26 @@
           return;
         }
 
-        // List view
         show(qs("#listView"));
-        try {
-          const items = await loadIndex();
 
-          // Sort newest first if dates exist; otherwise keep order
-          const sorted = [...items].sort((x, y) => (y.date || "").localeCompare(x.date || ""));
-          renderList(sorted);
+        try {
+          // Load titles once for list display
+          const items = [];
+          for (const file of ARTICLES) {
+            try {
+              const md = await fetchText(file);
+              const title = parseTitleFromMarkdown(md) || "Untitled";
+              items.push({ file, title });
+            } catch {
+              items.push({ file, title: "" });
+            }
+          }
 
           const search = qs("#search");
           const applyFilter = () => {
             const q = (search.value || "").toLowerCase().trim();
-            const filtered = !q ? sorted : sorted.filter(it =>
-              (it.title || "").toLowerCase().includes(q) ||
-              (it.file || "").toLowerCase().includes(q)
+            const filtered = !q ? items : items.filter(it =>
+              (it.title || "").toLowerCase().includes(q) || it.file.toLowerCase().includes(q)
             );
             renderList(filtered);
           };
@@ -339,14 +285,6 @@
           applyFilter();
         } catch (err) {
           setStatus(String(err.message || err));
-          qs("#articleList").innerHTML = `
-            <div class="rounded-2xl border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-6 text-sm text-red-700 dark:text-red-200">
-              Could not load <code>/articles/index.json</code>.
-              <div class="mt-3 opacity-90">
-                Create it with: <code>{ "articles": [ { "file": "x.txt", "title": "My Title" } ] }</code>
-              </div>
-            </div>
-          `;
         }
       }
 

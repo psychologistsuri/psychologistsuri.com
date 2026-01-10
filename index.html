@@ -33,16 +33,6 @@
         color-scheme: dark;
       }
 
-      body.theme-fade,
-      * {
-        transition: background-color 0.15s, color 0.15s, border-color 0.15s, fill 0.15s,
-          stroke 0.15s;
-      }
-
-      body.is-switching {
-        opacity: 0.94;
-      }
-
       .proseish h1 {
         font-size: 1.9rem;
         font-weight: 700;
@@ -91,22 +81,28 @@
         border-radius: 1rem;
         overflow: auto;
       }
+
+      @keyframes dots {
+        0% { content: ""; }
+        33% { content: "."; }
+        66% { content: ".."; }
+        100% { content: "..."; }
+      }
+
+      .dots::after {
+        content: "";
+        animation: dots 1.5s steps(3, end) infinite;
+      }
     </style>
   </head>
 
-  <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 theme-fade">
+  <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
     <div
       id="loader"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50"
-      aria-live="polite"
-      aria-busy="true"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-zinc-950"
     >
-      <div class="flex flex-col items-center gap-4 px-6 text-center">
-        <div class="text-3xl">⏳</div>
-        <div class="text-lg font-semibold">Website loading...</div>
-        <div class="text-sm text-zinc-600 dark:text-zinc-300">
-          Preparing articles and layout. Please wait.
-        </div>
+      <div class="text-lg font-medium tracking-wide">
+        Website loading<span class="dots"></span>
       </div>
     </div>
 
@@ -133,8 +129,6 @@
           <button
             id="themeToggle"
             class="h-10 w-10 rounded-full border-2 border-zinc-300 dark:border-zinc-700 flex items-center justify-center"
-            aria-label="Toggle theme"
-            type="button"
           ></button>
         </div>
       </div>
@@ -154,13 +148,12 @@
             <div
               class="flex items-center h-11 rounded-full border-2 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 gap-3"
             >
-              <span class="text-zinc-400" aria-hidden="true">🔍</span>
+              <span class="text-zinc-400">🔍</span>
               <input
                 id="search"
                 type="text"
                 placeholder="Search articles"
                 class="w-full bg-transparent outline-none text-sm"
-                autocomplete="off"
               />
             </div>
           </div>
@@ -179,7 +172,6 @@
           <button
             id="copyLinkBtn"
             class="px-4 py-2 rounded-full border-2 border-zinc-300 dark:border-zinc-700"
-            type="button"
           >
             Copy link
           </button>
@@ -204,200 +196,22 @@
       const BASE = "/articles/";
       const qs = (s) => document.querySelector(s);
 
-      marked.setOptions({
-        gfm: true,
-        breaks: false,
-        mangle: false,
-        headerIds: false,
-        highlight(code, lang) {
-          try {
-            if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
-            return hljs.highlightAuto(code).value;
-          } catch {
-            return code;
-          }
-        },
-      });
-
-      function setTheme(theme) {
-        document.documentElement.classList.toggle("dark", theme === "dark");
-        document.documentElement.style.colorScheme = theme;
-        localStorage.setItem("ps_theme", theme);
-      }
-
       function syncThemeIcon() {
-        const btn = qs("#themeToggle");
-        const isDark = document.documentElement.classList.contains("dark");
-        btn.textContent = isDark ? "☀️" : "🌙";
+        const b = qs("#themeToggle");
+        b.textContent = document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
       }
 
       syncThemeIcon();
 
-      qs("#themeToggle").addEventListener("click", () => {
-        const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
-        localStorage.setItem("ps_theme", next);
+      qs("#themeToggle").onclick = () => {
+        const n = document.documentElement.classList.contains("dark") ? "light" : "dark";
+        localStorage.setItem("ps_theme", n);
         location.reload();
+      };
+
+      window.addEventListener("load", () => {
+        setTimeout(() => qs("#loader").classList.add("hidden"), 5000);
       });
-
-      async function loadIndex() {
-        const res = await fetch(INDEX_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to load index.json");
-        const data = await res.json();
-        return Array.isArray(data.files) ? data.files : [];
-      }
-
-      async function fetchText(file) {
-        const res = await fetch(BASE + file, { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to load article");
-        return await res.text();
-      }
-
-      function parseTitle(md) {
-        const m = md.match(/^#\s+(.+)\s*$/m);
-        return m ? m[1].trim() : "Untitled";
-      }
-
-      function stripLeadingH1(md) {
-        return md.replace(/^\s*#\s+.+\s*\n+/, "");
-      }
-
-      function slug(s) {
-        return s
-          .toLowerCase()
-          .trim()
-          .replace(/['"]/g, "")
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-      }
-
-      function show(viewId) {
-        qs("#listView").classList.add("hidden");
-        qs("#articleView").classList.add("hidden");
-        qs("#aboutView").classList.add("hidden");
-        qs(viewId).classList.remove("hidden");
-      }
-
-      function renderList(items) {
-        const list = qs("#articleList");
-        list.innerHTML = "";
-
-        for (const item of items) {
-          const a = document.createElement("a");
-          a.href = "#/article/" + encodeURIComponent(item.slug);
-          a.className =
-            "block p-5 rounded-3xl border-2 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-900";
-          a.textContent = item.title;
-          list.appendChild(a);
-        }
-
-        const search = qs("#search");
-        search.value = "";
-        search.oninput = (e) => {
-          const q = (e.target.value || "").toLowerCase();
-          for (const c of list.children) {
-            const t = (c.textContent || "").toLowerCase();
-            c.style.display = t.includes(q) ? "block" : "none";
-          }
-        };
-      }
-
-      function wireCopyLink() {
-        const btn = qs("#copyLinkBtn");
-        btn.onclick = async () => {
-          const url = location.href;
-          try {
-            await navigator.clipboard.writeText(url);
-            btn.textContent = "Copied";
-            window.setTimeout(() => (btn.textContent = "Copy link"), 900);
-          } catch {
-            const ta = document.createElement("textarea");
-            ta.value = url;
-            ta.style.position = "fixed";
-            ta.style.left = "-9999px";
-            document.body.appendChild(ta);
-            ta.select();
-            try {
-              document.execCommand("copy");
-              btn.textContent = "Copied";
-              window.setTimeout(() => (btn.textContent = "Copy link"), 900);
-            } finally {
-              ta.remove();
-            }
-          }
-        };
-      }
-
-      async function buildItems(files) {
-        const items = [];
-        for (const f of files) {
-          try {
-            const md = await fetchText(f);
-            const title = parseTitle(md);
-            const s = slug(title);
-            items.push({ file: f, title, slug: s });
-          } catch {
-            items.push({ file: f, title: "Untitled", slug: slug(f) });
-          }
-        }
-        const seen = new Map();
-        for (const it of items) {
-          const base = it.slug || "article";
-          const n = (seen.get(base) || 0) + 1;
-          seen.set(base, n);
-          if (n > 1) it.slug = `${base}-${n}`;
-        }
-        return items;
-      }
-
-      async function route() {
-        const hash = location.hash || "#/";
-        try {
-          if (hash === "#/about") {
-            show("#aboutView");
-            return;
-          }
-
-          const files = await loadIndex();
-          const items = await buildItems(files);
-
-          if (hash.startsWith("#/article/")) {
-            const s = decodeURIComponent(hash.split("/").pop() || "");
-            const match = items.find((x) => x.slug === s);
-            if (!match) {
-              show("#listView");
-              renderList(items);
-              return;
-            }
-
-            const md = await fetchText(match.file);
-            qs("#articleTitle").textContent = match.title;
-            qs("#articleBody").innerHTML = marked.parse(stripLeadingH1(md));
-            show("#articleView");
-            wireCopyLink();
-            return;
-          }
-
-          show("#listView");
-          renderList(items);
-        } catch {
-          show("#listView");
-          const list = qs("#articleList");
-          list.innerHTML =
-            '<div class="p-5 rounded-3xl border-2 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200">Unable to load articles. Check /articles/index.json and file paths.</div>';
-        }
-      }
-
-      function startLoader() {
-        const loader = qs("#loader");
-        window.setTimeout(() => {
-          loader.classList.add("hidden");
-          loader.setAttribute("aria-busy", "false");
-        }, 5000);
-      }
-
-      window.addEventListener("hashchange", route);
-      startLoader();
-      route();
     </script>
   </body>
 </html>

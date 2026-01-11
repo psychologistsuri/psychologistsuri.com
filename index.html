@@ -47,129 +47,40 @@
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
 
     <style>
-      html.dark {
-        color-scheme: dark;
-      }
-
-      body.theme-fade,
-      * {
-        transition: background-color 0.15s, color 0.15s, border-color 0.15s, fill 0.15s,
-          stroke 0.15s;
-      }
-
-      body.is-switching {
-        opacity: 0.94;
-      }
-
-      .proseish h1 {
-        font-size: 1.9rem;
-        font-weight: 700;
-        margin: 1.5rem 0;
-      }
-
-      .proseish h2 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 1.25rem 0;
-      }
-
-      .proseish p {
-        margin: 0.75rem 0;
-      }
-
-      .proseish ul {
-        list-style: disc;
-        padding-left: 1.2rem;
-      }
-
-      .proseish blockquote {
-        border-left: 4px solid #e5e7eb;
-        padding-left: 1rem;
-        margin: 1rem 0;
-      }
-
-      .dark .proseish blockquote {
-        border-left-color: #334155;
-      }
-
-      .proseish code {
-        background: #f3f4f6;
-        padding: 0.2rem 0.4rem;
-        border-radius: 0.6rem;
-      }
-
-      .dark .proseish code {
-        background: #0f172a;
-      }
-
-      .proseish pre {
-        background: #020617;
-        color: #e5e7eb;
-        padding: 1rem;
-        border-radius: 1rem;
-        overflow: auto;
-      }
-
-      @keyframes dots {
-        0% {
-          content: "";
-        }
-        33% {
-          content: ".";
-        }
-        66% {
-          content: "..";
-        }
-        100% {
-          content: "...";
-        }
-      }
-
-      .dots::after {
-        content: "";
-        animation: dots 1.5s steps(3, end) infinite;
-      }
+      html.dark { color-scheme: dark; }
+      body.theme-fade, * { transition: background-color 0.15s, color 0.15s, border-color 0.15s, fill 0.15s, stroke 0.15s; }
+      body.is-switching { opacity: 0.94; }
+      .proseish h1 { font-size: 1.9rem; font-weight: 700; margin: 1.5rem 0; }
+      .proseish h2 { font-size: 1.5rem; font-weight: 700; margin: 1.25rem 0; }
+      .proseish p { margin: 0.75rem 0; }
+      .proseish ul { list-style: disc; padding-left: 1.2rem; }
+      .proseish blockquote { border-left: 4px solid #e5e7eb; padding-left: 1rem; margin: 1rem 0; }
+      .dark .proseish blockquote { border-left-color: #334155; }
+      .proseish code { background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 0.6rem; }
+      .dark .proseish code { background: #0f172a; }
+      .proseish pre { background: #020617; color: #e5e7eb; padding: 1rem; border-radius: 1rem; overflow: auto; }
+      @keyframes dots { 0%{content:"";}33%{content:".";}66%{content:"..";}100%{content:"...";} }
+      .dots::after { content:""; animation:dots 1.5s steps(3,end) infinite; }
     </style>
   </head>
 
   <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 theme-fade">
-    <div
-      id="loader"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50"
-      aria-live="polite"
-      aria-busy="true"
-    >
-      <div class="text-lg font-medium tracking-wide">
-        Website loading<span class="dots"></span>
-      </div>
+
+    <div id="loader" class="fixed inset-0 z-50 flex items-center justify-center bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
+      <div class="text-lg font-medium tracking-wide">Website loading<span class="dots"></span></div>
     </div>
 
-    <header
-      class="border-b border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-950/80 backdrop-blur"
-    >
+    <header class="border-b border-zinc-300 dark:border-zinc-700 bg-white/80 dark:bg-zinc-950/80 backdrop-blur">
       <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
         <a href="#/" class="font-semibold tracking-tight">Surendra Bisht</a>
 
         <div class="flex items-center gap-2">
           <nav class="flex gap-1 text-sm">
-            <a
-              href="#/"
-              class="px-3 sm:px-4 py-2 rounded-full border border-transparent hover:border-zinc-300 dark:hover:border-zinc-700"
-              >Articles</a
-            >
-            <a
-              href="#/about"
-              class="px-3 sm:px-4 py-2 rounded-full border border-transparent hover:border-zinc-300 dark:hover:border-zinc-700"
-              >About</a
-            >
+            <a href="#/" class="px-3 sm:px-4 py-2 rounded-full border border-transparent hover:border-zinc-300 dark:hover:border-zinc-700">Articles</a>
+            <a href="#/about" class="px-3 sm:px-4 py-2 rounded-full border border-transparent hover:border-zinc-300 dark:hover:border-zinc-700">About</a>
           </nav>
 
-          <button
-            id="themeToggle"
-            class="h-10 w-10 rounded-full border-2 border-zinc-300 dark:border-zinc-700 flex items-center justify-center"
-            aria-label="Toggle theme"
-            type="button"
-          ></button>
+          <button id="themeToggle" class="h-10 w-10 rounded-full border-2 border-zinc-300 dark:border-zinc-700 flex items-center justify-center"></button>
         </div>
       </div>
     </header>
@@ -181,7 +92,7 @@
             <img
               src="https://raw.githubusercontent.com/psychologistsuri/psychologistsuri.com/refs/heads/main/result.png"
               alt="Surendra Bisht"
-              class="w-14 h-14 rounded-full border-2 border-zinc-300 dark:border-zinc-700 object-cover"
+              class="w-20 h-20 rounded-full border-2 border-zinc-300 dark:border-zinc-700 object-cover"
               loading="lazy"
               decoding="async"
             />
@@ -194,17 +105,9 @@
           </div>
 
           <div class="w-full sm:w-80">
-            <div
-              class="flex items-center h-11 rounded-full border-2 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 gap-3"
-            >
-              <span class="text-zinc-400" aria-hidden="true">🔍</span>
-              <input
-                id="search"
-                type="text"
-                placeholder="Search articles"
-                class="w-full bg-transparent outline-none text-sm"
-                autocomplete="off"
-              />
+            <div class="flex items-center h-11 rounded-full border-2 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 gap-3">
+              <span class="text-zinc-400">🔍</span>
+              <input id="search" type="text" placeholder="Search articles" class="w-full bg-transparent outline-none text-sm" />
             </div>
           </div>
         </div>
@@ -214,237 +117,58 @@
 
       <section id="articleView" class="hidden">
         <div class="flex justify-between mb-6">
-          <a
-            href="#/"
-            class="px-4 py-2 rounded-full border-2 border-zinc-300 dark:border-zinc-700"
-            >Back</a
-          >
-          <button
-            id="copyLinkBtn"
-            class="px-4 py-2 rounded-full border-2 border-zinc-300 dark:border-zinc-700"
-            type="button"
-          >
-            Copy link
-          </button>
+          <a href="#/" class="px-4 py-2 rounded-full border-2 border-zinc-300 dark:border-zinc-700">Back</a>
+          <button id="copyLinkBtn" class="px-4 py-2 rounded-full border-2 border-zinc-300 dark:border-zinc-700">Copy link</button>
         </div>
-
         <h1 id="articleTitle" class="text-3xl font-bold"></h1>
         <div id="articleBody" class="mt-8 proseish"></div>
       </section>
 
       <section id="aboutView" class="hidden">
-        <div
-          class="rounded-3xl border-2 border-zinc-300 dark:border-zinc-700 p-6 flex flex-col sm:flex-row gap-6 items-center"
-        >
-          <img
-            src="https://raw.githubusercontent.com/psychologistsuri/psychologistsuri.com/refs/heads/main/result.png"
-            alt="Surendra Bisht"
-            class="w-40 h-40 rounded-full border-4 border-zinc-300 dark:border-zinc-700 object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-          <div class="text-center sm:text-left">
+        <div class="rounded-3xl border-2 border-zinc-300 dark:border-zinc-700 p-6 flex flex-col sm:flex-row gap-6 items-center">
+          <img src="https://raw.githubusercontent.com/psychologistsuri/psychologistsuri.com/refs/heads/main/result.png" class="w-40 h-40 rounded-full border-4 border-zinc-300 dark:border-zinc-700 object-cover" />
+          <div>
             <h1 class="text-2xl font-bold">About</h1>
-            <p class="mt-2 text-zinc-600 dark:text-zinc-300">
-              Special Educator & School Counselor — Applied Psychology
-            </p>
+            <p class="mt-2 text-zinc-600 dark:text-zinc-300">Special Educator & School Counselor · Applied Psychology</p>
           </div>
         </div>
       </section>
     </main>
 
     <script>
-      const INDEX_URL = "/articles/index.json";
-      const BASE = "/articles/";
-      const qs = (s) => document.querySelector(s);
+      const INDEX_URL="/articles/index.json",BASE="/articles/",qs=s=>document.querySelector(s);
 
-      marked.setOptions({
-        gfm: true,
-        breaks: false,
-        mangle: false,
-        headerIds: false,
-        highlight(code, lang) {
-          try {
-            if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
-            return hljs.highlightAuto(code).value;
-          } catch {
-            return code;
-          }
-        },
-      });
+      marked.setOptions({gfm:true,breaks:false,mangle:false,headerIds:false,highlight(c,l){try{return l&&hljs.getLanguage(l)?hljs.highlight(c,{language:l}).value:hljs.highlightAuto(c).value}catch{return c}}});
 
-      function syncThemeIcon() {
-        const btn = qs("#themeToggle");
-        btn.textContent = document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
-      }
+      function syncThemeIcon(){qs("#themeToggle").textContent=document.documentElement.classList.contains("dark")?"☀️":"🌙"}syncThemeIcon();
+      qs("#themeToggle").onclick=()=>{localStorage.setItem("ps_theme",document.documentElement.classList.contains("dark")?"light":"dark");location.reload()};
 
-      syncThemeIcon();
+      async function loadIndex(){const r=await fetch(INDEX_URL,{cache:"no-store"});return(r.ok?await r.json():{files:[]}).files||[]}
+      async function fetchText(f){const r=await fetch(BASE+f,{cache:"no-store"});return r.ok?await r.text():""}
 
-      qs("#themeToggle").addEventListener("click", () => {
-        const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
-        localStorage.setItem("ps_theme", next);
-        location.reload();
-      });
+      function parseTitle(m){const r=m.match(/^#\s+(.+)$/m);return r?r[1]:"Untitled"}
+      function stripLeadingH1(m){return m.replace(/^\s*#\s+.+\n+/,"")}
+      function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
 
-      async function loadIndex() {
-        const res = await fetch(INDEX_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to load index.json");
-        const data = await res.json();
-        return Array.isArray(data.files) ? data.files : [];
-      }
+      function show(v){["#listView","#articleView","#aboutView"].forEach(x=>qs(x).classList.add("hidden"));qs(v).classList.remove("hidden")}
 
-      async function fetchText(file) {
-        const res = await fetch(BASE + file, { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to load article");
-        return await res.text();
-      }
+      function startLoader(){setTimeout(()=>qs("#loader").classList.add("hidden"),500)}
 
-      function parseTitle(md) {
-        const m = md.match(/^#\s+(.+)\s*$/m);
-        return m ? m[1].trim() : "Untitled";
-      }
-
-      function stripLeadingH1(md) {
-        return md.replace(/^\s*#\s+.+\s*\n+/, "");
-      }
-
-      function slug(s) {
-        return s
-          .toLowerCase()
-          .trim()
-          .replace(/['"]/g, "")
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-      }
-
-      function show(viewId) {
-        qs("#listView").classList.add("hidden");
-        qs("#articleView").classList.add("hidden");
-        qs("#aboutView").classList.add("hidden");
-        qs(viewId).classList.remove("hidden");
-      }
-
-      function renderList(items) {
-        const list = qs("#articleList");
-        list.innerHTML = "";
-
-        for (const item of items) {
-          const a = document.createElement("a");
-          a.href = "#/article/" + encodeURIComponent(item.slug);
-          a.className =
-            "block p-5 rounded-3xl border-2 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-900";
-          a.textContent = item.title;
-          list.appendChild(a);
+      async function route(){
+        const h=location.hash||"#/";
+        if(h==="#/about"){show("#aboutView");return}
+        const files=await loadIndex(),items=[];
+        for(const f of files){const m=await fetchText(f),t=parseTitle(m);items.push({file:f,title:t,slug:slug(t)})}
+        if(h.startsWith("#/article/")){
+          const s=h.split("/").pop(),i=items.find(x=>x.slug===s);
+          if(i){qs("#articleTitle").textContent=i.title;qs("#articleBody").innerHTML=marked.parse(stripLeadingH1(await fetchText(i.file)));show("#articleView");return}
         }
-
-        const search = qs("#search");
-        search.value = "";
-        search.oninput = (e) => {
-          const q = (e.target.value || "").toLowerCase();
-          for (const c of list.children) {
-            const t = (c.textContent || "").toLowerCase();
-            c.style.display = t.includes(q) ? "block" : "none";
-          }
-        };
+        show("#listView");
+        const l=qs("#articleList");l.innerHTML="";
+        for(const i of items){const a=document.createElement("a");a.href="#/article/"+i.slug;a.className="block p-5 rounded-3xl border-2 border-zinc-300 dark:border-zinc-700";a.textContent=i.title;l.appendChild(a)}
       }
 
-      function wireCopyLink() {
-        const btn = qs("#copyLinkBtn");
-        btn.onclick = async () => {
-          const url = location.href;
-          try {
-            await navigator.clipboard.writeText(url);
-            btn.textContent = "Copied";
-            window.setTimeout(() => (btn.textContent = "Copy link"), 900);
-          } catch {
-            const ta = document.createElement("textarea");
-            ta.value = url;
-            ta.style.position = "fixed";
-            ta.style.left = "-9999px";
-            document.body.appendChild(ta);
-            ta.select();
-            try {
-              document.execCommand("copy");
-              btn.textContent = "Copied";
-              window.setTimeout(() => (btn.textContent = "Copy link"), 900);
-            } finally {
-              ta.remove();
-            }
-          }
-        };
-      }
-
-      async function buildItems(files) {
-        const items = [];
-        for (const f of files) {
-          try {
-            const md = await fetchText(f);
-            const title = parseTitle(md);
-            const s = slug(title);
-            items.push({ file: f, title, slug: s });
-          } catch {
-            items.push({ file: f, title: "Untitled", slug: slug(f) });
-          }
-        }
-        const seen = new Map();
-        for (const it of items) {
-          const base = it.slug || "article";
-          const n = (seen.get(base) || 0) + 1;
-          seen.set(base, n);
-          if (n > 1) it.slug = `${base}-${n}`;
-        }
-        return items;
-      }
-
-      async function route() {
-        const hash = location.hash || "#/";
-        try {
-          if (hash === "#/about") {
-            show("#aboutView");
-            return;
-          }
-
-          const files = await loadIndex();
-          const items = await buildItems(files);
-
-          if (hash.startsWith("#/article/")) {
-            const s = decodeURIComponent(hash.split("/").pop() || "");
-            const match = items.find((x) => x.slug === s);
-            if (!match) {
-              show("#listView");
-              renderList(items);
-              return;
-            }
-
-            const md = await fetchText(match.file);
-            qs("#articleTitle").textContent = match.title;
-            qs("#articleBody").innerHTML = marked.parse(stripLeadingH1(md));
-            show("#articleView");
-            wireCopyLink();
-            return;
-          }
-
-          show("#listView");
-          renderList(items);
-        } catch {
-          show("#listView");
-          const list = qs("#articleList");
-          list.innerHTML =
-            '<div class="p-5 rounded-3xl border-2 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200">Unable to load articles. Check /articles/index.json and file paths.</div>';
-        }
-      }
-
-      function startLoader() {
-        const loader = qs("#loader");
-        window.setTimeout(() => {
-          loader.classList.add("hidden");
-          loader.setAttribute("aria-busy", "false");
-        }, 1500);
-      }
-
-      window.addEventListener("hashchange", route);
-      startLoader();
-      route();
+      window.onhashchange=route;startLoader();route();
     </script>
   </body>
 </html>
